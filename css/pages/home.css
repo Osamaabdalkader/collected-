@@ -1,181 +1,545 @@
-/* home.css - أنماط الصفحة الرئيسية */
-.container {
-    padding: 180px 15px 10px;
+/* أنماط الصفحة الرئيسية */
+.home-container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 20px;
 }
 
-.posts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-    position: relative;
-    min-height: 200px;
+/* قسم البانر الرئيسي */
+.hero-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 0;
+    flex-wrap: wrap;
 }
 
-.post-card {
+.hero-content {
+    flex: 1;
+    min-width: 300px;
+    padding: 20px;
+}
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #0f2027;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #203a43;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #4cc9f0, #3a86ff);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, #3a86ff, #4cc9f0);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(58, 134, 255, 0.4);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #4cc9f0;
+    border: 2px solid #4cc9f0;
+}
+
+.btn-secondary:hover {
+    background: #4cc9f0;
+    color: white;
+}
+
+.hero-image {
+    flex: 1;
+    min-width: 300px;
+    text-align: center;
+}
+
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* قسم الميزات */
+.features-section {
+    padding: 60px 0;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: 1px solid rgba(76, 201, 240, 0.2);
-    backdrop-filter: blur(5px);
+    margin: 40px 0;
 }
 
-.post-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    border-color: #4cc9f0;
+.features-section h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+    color: #0f2027;
 }
 
-.post-image {
-    height: 160px;
-    overflow: hidden;
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+}
+
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(90deg, #4cc9f0, #3a86ff);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.2);
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 1.8rem;
 }
 
-.post-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
+.feature-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    color: #0f2027;
 }
 
-.post-card:hover .post-image img {
-    transform: scale(1.05);
+.feature-card p {
+    color: #203a43;
+    line-height: 1.6;
 }
 
-.no-image {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 2.5rem;
+/* قسم كيفية العمل */
+.how-it-works {
+    padding: 60px 0;
 }
 
-.post-content {
-    padding: 15px;
+.how-it-works h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+    color: #0f2027;
 }
 
-.post-title {
-    font-size: 1rem;
-    margin-bottom: 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #90e0ef;
+.steps-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    counter-reset: step-counter;
 }
 
-.post-description {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    line-height: 1.4;
-    height: 2.8em;
+.step {
+    text-align: center;
+    position: relative;
 }
 
-.post-details {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
-.detail-item {
+.step-number {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(90deg, #4cc9f0, #3a86ff);
+    color: white;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 0.75rem;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 4px 8px;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.step:not(:last-child):after {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: #4cc9f0;
+    z-index: 1;
+}
+
+.step h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: #0f2027;
+}
+
+.step p {
+    color: #203a43;
+}
+
+/* قسم الإحصائيات */
+.stats-section {
+    padding: 60px 0;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+    margin: 40px 0;
+    border-radius: 15px;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 30px;
+    text-align: center;
+}
+
+.stat h3 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.stat p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* قسم آراء العملاء */
+.testimonials {
+    padding: 60px 0;
+}
+
+.testimonials h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+    color: #0f2027;
+}
+
+.testimonials-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.testimonial {
+    background: white;
+    padding: 30px;
     border-radius: 12px;
-    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
 
-.detail-item i {
-    color: #4cc9f0;
-    font-size: 0.7rem;
+.testimonial-content {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    position: relative;
 }
 
-.post-meta {
+.testimonial-content:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 40px;
+    width: 20px;
+    height: 20px;
+    background: #f8f9fa;
+    transform: rotate(45deg);
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+}
+
+.testimonial-author img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.testimonial-author h4 {
+    margin: 0;
+    color: #0f2027;
+}
+
+.testimonial-author p {
+    margin: 0;
+    color: #203a43;
+    font-size: 0.9rem;
+}
+
+/* قسم الأسئلة الشائعة */
+.faq-section {
+    padding: 60px 0;
+}
+
+.faq-section h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+    color: #0f2027;
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.faq-question {
+    padding: 20px;
+    background: #f8f9fa;
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 10px;
+    align-items: center;
+    cursor: pointer;
 }
 
-.post-time, .post-author {
+.faq-question h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #0f2027;
+}
+
+.faq-answer {
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faq-answer p {
+    padding: 20px 0;
+    margin: 0;
+    color: #203a43;
+    line-height: 1.6;
+}
+
+/* قسم اتصل بنا */
+.contact-section {
+    padding: 60px 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    margin: 40px 0;
+}
+
+.contact-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 50px;
+}
+
+.contact-info h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #0f2027;
+}
+
+.contact-info p {
+    margin-bottom: 30px;
+    color: #203a43;
+    line-height: 1.6;
+}
+
+.contact-details {
+    margin-top: 30px;
+}
+
+.contact-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    margin-bottom: 15px;
 }
 
-.post-meta i {
-    font-size: 0.7rem;
+.contact-item i {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(90deg, #4cc9f0, #3a86ff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 15px;
 }
 
-.no-posts {
-    text-align: center;
-    grid-column: 1 / -1;
-    padding: 40px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 1.1rem;
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Tajawal', sans-serif;
 }
 
-.posts-loading {
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* التذييل */
+.home-footer {
+    background: #0f2027;
+    color: white;
+    padding: 50px 0 20px;
+    margin-top: 60px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-logo {
+    max-width: 120px;
+    margin-bottom: 20px;
+}
+
+.footer-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer-section h3:after {
+    content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: rgba(255, 255, 255, 0.7);
-    z-index: 10;
+    bottom: 0;
+    right: 0;
+    width: 50px;
+    height: 2px;
+    background: #4cc9f0;
 }
 
-.posts-loading .spinner {
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #4cc9f0;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
     width: 40px;
     height: 40px;
-    border: 4px solid rgba(76, 201, 240, 0.3);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
-    border-top-color: #4cc9f0;
-    animation: spin 1s ease-in-out infinite;
-    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.social-links a:hover {
+    background: #4cc9f0;
+    transform: translateY(-3px);
 }
 
-/* تصميم متجاوب */
+.footer-bottom {
+    text-align: center;
+    padding-top: 30px;
+    margin-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* التكيف مع الشاشات المختلفة */
 @media (max-width: 768px) {
-    .container {
-        padding: 160px 10px 70px;
+    .hero-banner {
+        flex-direction: column;
+        text-align: center;
     }
     
-    .posts-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 15px;
+    .hero-buttons {
+        justify-content: center;
     }
     
-    .post-image {
-        height: 140px;
+    .contact-container {
+        grid-template-columns: 1fr;
     }
     
-    .post-content {
-        padding: 12px;
+    .step:not(:last-child):after {
+        display: none;
     }
 }
 
 @media (max-width: 480px) {
-    .posts-grid {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .features-grid,
+    .testimonials-container {
         grid-template-columns: 1fr;
     }
-}
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .footer-section h3:after {
+        right: 50%;
+        transform: translateX(50%);
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    }
