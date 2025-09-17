@@ -1,7 +1,7 @@
 // dashboard.js - الإصدار المعدل لمنصة تسريع
-import { auth, database, ref, get, onValue, query, orderByChild, equalTo } from './firebase.js';
-import { checkPromotions, setupRankChangeListener, checkAdminStatus } from './firebase.js';
-import { authManager } from './auth.js';
+import { auth, database, ref, get, onValue, query, orderByChild, equalTo } from './jsr/firebase.js';
+import { checkPromotions, setupRankChangeListener, checkAdminStatus } from './constructornstructorshboardManagerassassass/firebase.js';
+import { authManager } from '/distributionData/auth.js';
 
 class DashboardManager {
   constructor() {
