@@ -1,23 +1,17 @@
 // js/main.js - الملف الرئيسي للتطبيق
-import { authManager } from './auth.js';
-import { initHeader } from './components/header-main.js';
-import { initFooter } from './components/footer-common.js';
+import { loadComponent } from './utils/componentLoader.js';
 
 // تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // تهيئة مدير المصادقة
-        await authManager.init();
+        // تحميل الهيدر
+        await loadComponent('header-container', 'components/header-main.html');
         
-        // تهيئة المكونات
-        initHeader();
-        initFooter();
+        // تحميل الفوتر
+        await loadComponent('footer-container', 'components/footer-common.html');
         
-        console.log('تم تهيئة التطبيق بنجاح');
+        console.log('تم تحميل المكونات بنجاح');
     } catch (error) {
-        console.error('خطأ في تهيئة التطبيق:', error);
+        console.error('خطأ في تحميل المكونات:', error);
     }
 });
-
-// تصدير كائنات عامة للاستخدام في الملفات الأخرى
-window.authManager = authManager;
