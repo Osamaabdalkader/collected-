@@ -5,27 +5,22 @@ import {
     ref 
 } from '../firebase.js';
 
-// عناصر DOM
-const postsContainer = document.getElementById('posts-container');
-
 // متغيرات النظام
 let currentPosts = [];
-let currentFilter = {
-    type: '',
-    location: ''
-};
 
-// تحميل المنشورات عند بدء التحميل
-document.addEventListener('DOMContentLoaded', () => {
+export function initHomePage() {
     showPostsLoading();
     loadPosts();
-    initFiltersAndSearch();
-});
+    
+    // الاستماع لأحداث الفلترة
+    window.addEventListener('filterPosts', filterPosts);
+}
 
 // تحميل المنشورات للجميع
 function loadPosts() {
     const postsRef = ref(database, 'posts');
     onValue(postsRef, (snapshot) => {
+        const postsContainer = document.getElementById('posts-container');
         postsContainer.innerHTML = '';
         currentPosts = [];
         
@@ -124,46 +119,14 @@ function createPostCard(post) {
     return postCard;
 }
 
-// تهيئة الفلاتر والبحث
-function initFiltersAndSearch() {
-    // البحث
-    const searchInput = document.querySelector('.search-input');
-    const searchBtn = document.querySelector('.search-btn');
-    
-    if (searchBtn && searchInput) {
-        searchBtn.addEventListener('click', filterPosts);
-        searchInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') {
-                filterPosts();
-            }
-        });
-    }
-    
-    // الفلاتر
-    const typeFilter = document.querySelector('.filter-category select');
-    const locationFilter = document.querySelector('.filter-location select');
-    
-    if (typeFilter) {
-        typeFilter.addEventListener('change', () => {
-            currentFilter.type = typeFilter.value;
-            filterPosts();
-        });
-    }
-    
-    if (locationFilter) {
-        locationFilter.addEventListener('change', () => {
-            currentFilter.location = locationFilter.value;
-            filterPosts();
-        });
-    }
-}
-
 // فلترة المنشورات
 function filterPosts() {
     const searchInput = document.querySelector('.search-input');
     const searchText = searchInput ? searchInput.value.toLowerCase() : '';
-    const posts = document.querySelectorAll('.post-card');
+    const categoryFilter = document.querySelector('.filter-category select')?.value || '';
+    const locationFilter = document.querySelector('.filter-location select')?.value || '';
     
+    const posts = document.querySelectorAll('.post-card');
     let visibleCount = 0;
     
     posts.forEach(post => {
@@ -176,8 +139,8 @@ function filterPosts() {
                              title.includes(searchText) || 
                              description.includes(searchText);
         
-        const matchesType = !currentFilter.type || type === currentFilter.type;
-        const matchesLocation = !currentFilter.location || location === currentFilter.location;
+        const matchesType = !categoryFilter || type === categoryFilter;
+        const matchesLocation = !locationFilter || location === locationFilter;
         
         if (matchesSearch && matchesType && matchesLocation) {
             post.style.display = 'block';
@@ -195,7 +158,7 @@ function filterPosts() {
             noResultsMsg.id = 'no-results';
             noResultsMsg.className = 'no-posts';
             noResultsMsg.textContent = 'لا توجد نتائج تطابق بحثك';
-            postsContainer.appendChild(noResultsMsg);
+            document.getElementById('posts-container').appendChild(noResultsMsg);
         }
     } else if (noResults) {
         noResults.remove();
@@ -244,6 +207,7 @@ function formatTimeAgo(timestamp) {
 
 // وظائف مساعدة للتحميل
 function showPostsLoading() {
+    const postsContainer = document.getElementById('posts-container');
     postsContainer.innerHTML = `
         <div class="posts-loading">
             <div class="spinner"></div>
@@ -257,4 +221,4 @@ function hidePostsLoading() {
     if (loadingElement) {
         loadingElement.remove();
     }
-                }
+}
