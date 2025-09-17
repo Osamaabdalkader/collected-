@@ -1,5 +1,6 @@
 // js/components/footer-common.js - معالجات الفوتر المشترك
 import { authManager } from '../auth.js';
+import { router } from '../router.js';
 
 export function initFooter() {
     // إعداد مستمعي الأحداث للفوتر
@@ -15,9 +16,9 @@ export function initFooter() {
             e.preventDefault();
             const user = authManager.currentUser;
             if (user) {
-                window.location.href = 'pages/dashboard.html';
+                router.navigate('/dashboard');
             } else {
-                window.location.href = 'pages/login.html';
+                router.navigate('/login');
             }
         });
     }
@@ -30,7 +31,7 @@ export function initFooter() {
             if (user) {
                 alert('صفحة السلة قيد التطوير');
             } else {
-                window.location.href = 'pages/login.html';
+                router.navigate('/login');
             }
         });
     }
@@ -42,7 +43,7 @@ export function initFooter() {
             if (!user) {
                 e.preventDefault();
                 alert('يجب تسجيل الدخول أولاً');
-                window.location.href = 'pages/login.html';
+                router.navigate('/login');
             }
         });
     }
@@ -53,10 +54,10 @@ export function initFooter() {
             e.preventDefault();
             const user = authManager.currentUser;
             if (user) {
-                window.location.href = 'pages/messages.html';
+                router.navigate('/messages');
             } else {
                 alert('يجب تسجيل الدخول أولاً للوصول إلى الرسائل');
-                window.location.href = 'pages/login.html';
+                router.navigate('/login');
             }
         });
     }
@@ -69,10 +70,10 @@ export function initFooter() {
             if (user) {
                 alert('صفحة المزيد قيد التطوير');
             } else {
-                window.location.href = 'pages/login.html';
+                router.navigate('/login');
             }
         });
     }
     
     console.log('تم تهيئة الفوتر المشترك');
-}
+        }
