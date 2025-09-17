@@ -8,6 +8,7 @@ class AuthManager {
     this.userData = null;
     this.isAdmin = false;
     this.adminListeners = [];
+    this.authListeners = [];
   }
 
   async init() {
@@ -22,14 +23,34 @@ class AuthManager {
           // إعداد مستمع لتغيرات حالة المشرف
           this.setupAdminStatusListener(user.uid);
           
+          // إشعار جميع المستمعين بتسجيل الدخول
+          this.notifyAuthChange(true, user);
           resolve(user);
         } else {
           console.log("لا يوجد مستخدم مسجل دخول");
           this.isAdmin = false;
           this.updateAuthUI(false);
+          // إشعار جميع المستمعين بتسجيل الخروج
+          this.notifyAuthChange(false, null);
           resolve(null);
         }
       });
+    });
+  }
+
+  addAuthListener(callback) {
+    this.authListeners.push(callback);
+    // إرجاع دالة لإلغاء الاشتراك
+    return () => {
+      this.authListeners = this.authListeners.filter(cb => cb !== callback);
+    };
+  }
+
+  notifyAuthChange(isLoggedIn, user) {
+    this.authListeners.forEach(callback => {
+      if (typeof callback === 'function') {
+        callback(isLoggedIn, user);
+      }
     });
   }
 
@@ -95,7 +116,12 @@ class AuthManager {
     try {
       this.removeAdminListeners();
       await signOut(auth);
-      window.location.href = '../index.html';
+      // استخدام نظام التوجيه بدلاً من إعادة التحميل
+      if (typeof router !== 'undefined') {
+        router.navigate('/');
+      } else {
+        window.location.href = '../index.html';
+      }
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -166,6 +192,29 @@ class AuthManager {
       console.error("خطأ في التحقق من صلاحية المشرف:", error);
       return false;
     }
+  }
+
+  // دالة جديدة للتحقق من المصادقة مع الانتظار
+  async checkAuth() {
+    return new Promise((resolve) => {
+      if (this.currentUser) {
+        resolve(this.currentUser);
+      } else {
+        // إذا لم يكن هناك مستخدم، ننتظر حدوث تغيير في حالة المصادقة
+        const unsubscribe = this.addAuthListener((isLoggedIn, user) => {
+          if (isLoggedIn) {
+            unsubscribe();
+            resolve(user);
+          }
+        });
+        
+        // وقت الانتظار القصوى (10 ثوان)
+        setTimeout(() => {
+          unsubscribe();
+          resolve(null);
+        }, 10000);
+      }
+    });
   }
 }
 
