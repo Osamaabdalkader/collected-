@@ -3,6 +3,7 @@ import { auth, createUserWithEmailAndPassword } from '../firebase.js';
 import { database, ref, set, get, child, update } from '../firebase.js';
 import { addPointsAndCheckPromotion, setupRankChangeListener } from '../firebase.js';
 import { authManager } from '../auth.js';
+import { router } from '../router.js';
 
 class RegisterManager {
   constructor() {
@@ -113,9 +114,9 @@ class RegisterManager {
       
       authManager.showAlert(alert, 'success', 'تم إنشاء الحساب بنجاح');
       
-      // الانتقال إلى لوحة التحكم بعد ثانية
+      // الانتقال إلى لوحة التحكم بعد ثانية باستخدام نظام التوجيه
       setTimeout(() => {
-        window.location.href = 'dashboard.html';
+        router.navigate('/dashboard');
       }, 1000);
       
     } catch (error) {
@@ -125,6 +126,6 @@ class RegisterManager {
 }
 
 // تهيئة النظام عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', () => {
+export function initRegisterPage() {
   new RegisterManager();
-});
+        }
