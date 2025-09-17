@@ -1,51 +1,37 @@
-// معالجات الهيدر الرئيسي
-import { authManager } from '../../auth.js';
+// js/components/header-main.js - معالجات هيدر الرئيسية
+import { authManager } from '../auth.js';
 
-class HeaderMain {
-    constructor() {
-        this.init();
+export function initHeader() {
+    // إعداد مستمعي الأحداث للهيدر
+    const notificationsIcon = document.getElementById('notifications-icon');
+    const profileHeaderIcon = document.getElementById('profile-header-icon');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    
+    // أيقونة الإشعارات
+    if (notificationsIcon) {
+        notificationsIcon.addEventListener('click', () => {
+            alert('صفحة الإشعارات قيد التطوير');
+        });
     }
 
-    init() {
-        this.setupEventListeners();
+    // أيقونة الملف الشخصي في الهيدر
+    if (profileHeaderIcon) {
+        profileHeaderIcon.addEventListener('click', () => {
+            const user = authManager.currentUser;
+            if (user) {
+                window.location.href = 'pages/profile.html';
+            } else {
+                window.location.href = 'pages/login.html';
+            }
+        });
     }
 
-    setupEventListeners() {
-        // أيقونة الملف الشخصي
-        const profileIcon = document.getElementById('profile-header-icon');
-        if (profileIcon) {
-            profileIcon.addEventListener('click', () => {
-                const user = authManager.currentUser;
-                if (user) {
-                    window.location.href = '../pages/profile.html';
-                } else {
-                    window.location.href = '../pages/login.html';
-                }
-            });
-        }
-
-        // أيقونة الإشعارات
-        const notificationsIcon = document.getElementById('notifications-icon');
-        if (notificationsIcon) {
-            notificationsIcon.addEventListener('click', () => {
-                alert('صفحة الإشعارات قيد التطوير');
-            });
-        }
-
-        // أيقونة القائمة الجانبية
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', () => {
-                this.toggleSidebar();
-            });
-        }
+    // أيقونة القائمة الجانبية
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+            alert('القائمة الجانبية قيد التطوير');
+        });
     }
-
-    toggleSidebar() {
-        // سيتم تنفيذ هذه الوظيفة لاحقاً
-        console.log('فتح/إغلاق القائمة الجانبية');
-    }
+    
+    console.log('تم تهيئة هيدر الصفحة الرئيسية');
 }
-
-// تصدير الكلاس للاستخدام في الملفات الأخرى
-export { HeaderMain };
