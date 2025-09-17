@@ -1,5 +1,6 @@
 // js/components/header-main.js - معالجات هيدر الرئيسية
 import { authManager } from '../auth.js';
+import { router } from '../router.js';
 
 export function initHeader() {
     // إعداد مستمعي الأحداث للهيدر
@@ -22,9 +23,9 @@ export function initHeader() {
         profileHeaderIcon.addEventListener('click', () => {
             const user = authManager.currentUser;
             if (user) {
-                window.location.href = 'pages/profile.html';
+                router.navigate('/dashboard');
             } else {
-                window.location.href = 'pages/login.html';
+                router.navigate('/login');
             }
         });
     }
@@ -61,4 +62,4 @@ export function initHeader() {
     }
     
     console.log('تم تهيئة هيدر الصفحة الرئيسية');
-        }
+                                           }
