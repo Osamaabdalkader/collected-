@@ -7,12 +7,12 @@ import { initHomePage } from './pages/home.js';
 // تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // تحميل الهيدر
-        await loadComponent('header-container', 'components/header-main.html');
+        // تحميل الهيدر الرئيسي
+        await loadComponent('header-container', './components/header-main.html');
         initHeader();
         
-        // تحميل الفوتر
-        await loadComponent('footer-container', 'components/footer-common.html');
+        // تحميل الفوتر المشترك
+        await loadComponent('footer-container', './components/footer-common.html');
         initFooter();
         
         // تهيئة الصفحة الرئيسية
