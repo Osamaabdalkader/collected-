@@ -1,47 +1,32 @@
-// معالجات الهيدر المشترك
-import { authManager } from '../../auth.js';
+// js/components/header-common.js - معالجات الهيدر المشترك للصفحات الداخلية
+import { authManager } from '../auth.js';
 
-class HeaderCommon {
-    constructor() {
-        this.init();
+export function initHeaderCommon() {
+    // إعداد مستمعي الأحداث للهيدر المشترك
+    const notificationsIcon = document.getElementById('notifications-icon');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const homeIcon = document.querySelector('.home-icon');
+    
+    // أيقونة الإشعارات
+    if (notificationsIcon) {
+        notificationsIcon.addEventListener('click', () => {
+            alert('صفحة الإشعارات قيد التطوير');
+        });
     }
 
-    init() {
-        this.setupEventListeners();
+    // أيقونة القائمة الجانبية
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+            alert('القائمة الجانبية قيد التطوير');
+        });
     }
-
-    setupEventListeners() {
-        // أيقونة العودة للصفحة الرئيسية
-        const homeIcon = document.querySelector('.home-icon');
-        if (homeIcon) {
-            homeIcon.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.location.href = '../pages/home.html';
-            });
+    
+    // أيقونة العودة للصفحة الرئيسية
+    if (homeIcon) {
+        homeIcon.addEventListener('click', (e) => {
+            // السلوك الافتراضي يكفي للانتقال إلى index.html
+        });
+    }
+    
+    console.log('تم تهيئة الهيدر المشترك للصفحات الداخلية');
         }
-
-        // أيقونة الإشعارات
-        const notificationsIcon = document.getElementById('notifications-icon');
-        if (notificationsIcon) {
-            notificationsIcon.addEventListener('click', () => {
-                alert('صفحة الإشعارات قيد التطوير');
-            });
-        }
-
-        // أيقونة القائمة الجانبية
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', () => {
-                this.toggleSidebar();
-            });
-        }
-    }
-
-    toggleSidebar() {
-        // سيتم تنفيذ هذه الوظيفة لاحقاً
-        console.log('فتح/إغلاق القائمة الجانبية');
-    }
-}
-
-// تصدير الكلاس للاستخدام في الملفات الأخرى
-export { HeaderCommon };
