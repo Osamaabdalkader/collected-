@@ -1,4 +1,4 @@
-// js/main.js - الملف الرئيسي للتطبيق (محدث)
+// js/main.js - الملف الرئيسي للتطبيق
 import { loadComponent } from './utils/componentLoader.js';
 import { initHeader } from './components/header-main.js';
 import { initFooter } from './components/footer-common.js';
