@@ -6,6 +6,9 @@ export function initHeader() {
     const notificationsIcon = document.getElementById('notifications-icon');
     const profileHeaderIcon = document.getElementById('profile-header-icon');
     const sidebarToggle = document.getElementById('sidebar-toggle');
+    const searchBtn = document.querySelector('.search-btn');
+    const searchInput = document.querySelector('.search-input');
+    const filters = document.querySelectorAll('.filter-select');
     
     // أيقونة الإشعارات
     if (notificationsIcon) {
@@ -33,5 +36,29 @@ export function initHeader() {
         });
     }
     
+    // إعداد البحث والفلاتر
+    if (searchBtn && searchInput) {
+        searchBtn.addEventListener('click', () => {
+            const event = new Event('filterPosts');
+            window.dispatchEvent(event);
+        });
+        
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                const event = new Event('filterPosts');
+                window.dispatchEvent(event);
+            }
+        });
+    }
+
+    if (filters) {
+        filters.forEach(filter => {
+            filter.addEventListener('change', () => {
+                const event = new Event('filterPosts');
+                window.dispatchEvent(event);
+            });
+        });
+    }
+    
     console.log('تم تهيئة هيدر الصفحة الرئيسية');
-}
+        }
