@@ -1,4 +1,4 @@
-// firebase.js
+// js/firebase.js - تكامل Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
 import { 
@@ -100,7 +100,7 @@ const checkPromotions = async (userId) => {
         lastPromotion: new Date().toISOString()
       });
       
-    // بعد الترقية، تحقق من ترقية المُحيل إذا لزم الأمر
+      // بعد الترقية، تحقق من ترقية المُحيل إذا لزم الأمر
       if (userData.referredBy) {
         console.log(`المستخدم تمت إحالته بواسطة ${userData.referredBy}. التحقق من ترقيات الفريق...`);
         await checkTeamPromotions(userData.referredBy, newRank);
@@ -516,4 +516,3 @@ export {
   checkAdminStatus, getAllUsers, searchUsers, addPointsToUser, updateAdminStatus,
   getUserIdFromReferralCode, distributePointsToUplines
 };
-;
