@@ -1,5 +1,6 @@
 // js/components/header-common.js - معالجات الهيدر المشترك للصفحات الداخلية
 import { authManager } from '../auth.js';
+import { router } from '../router.js';
 
 export function initHeaderCommon() {
     // إعداد مستمعي الأحداث للهيدر المشترك
@@ -24,9 +25,10 @@ export function initHeaderCommon() {
     // أيقونة العودة للصفحة الرئيسية
     if (homeIcon) {
         homeIcon.addEventListener('click', (e) => {
-            // السلوك الافتراضي يكفي للانتقال إلى index.html
+            e.preventDefault();
+            router.navigate('/');
         });
     }
     
     console.log('تم تهيئة الهيدر المشترك للصفحات الداخلية');
-        }
+                                  }
