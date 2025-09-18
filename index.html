@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -6,31 +6,45 @@
     <title>منصة تسريع الإلكترونية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/pages/home.css">
 </head>
 <body>
-    <!-- عنصر لحمل الهيدر -->
-    <div id="header-container"></div>
-
-    <!-- المحتوى الديناميكي -->
-    <main id="main-content">
-        <!-- الصفحة الرئيسية -->
-        <div class="container">
-            <div class="posts-grid" id="posts-container">
-                <div class="posts-loading">
-                    <div class="spinner"></div>
-                    <p>جاري تحميل المنشورات...</p>
+    <!-- شريط الذهبي -->
+    <div class="gold-bar"></div>
+    
+    <!-- الخلفية المتحركة -->
+    <div class="background-animation"></div>
+    
+    <!-- منطقة تحميل المكونات -->
+    <div id="app">
+        <!-- سيتم تحميل الهيدر هنا -->
+        <div id="header-container"></div>
+        
+        <!-- المحتوى الرئيسي -->
+        <main id="main-content">
+            <div class="container">
+                <div class="posts-grid" id="posts-container">
+                    <div class="posts-loading">
+                        <div class="spinner"></div>
+                        <p>جاري تحميل المنشورات...</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
-
-    <!-- عنصر لحمل الفوتر -->
-    <div id="footer-container"></div>
+        </main>
+        
+        <!-- سيتم تحميل الفوتر هنا -->
+        <div id="footer-container"></div>
+    </div>
 
     <!-- Firebase SDK -->
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/router.js"></script>
     <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/pages/home.js"></script>
 </body>
-            </html>
+    </html>
