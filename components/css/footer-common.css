@@ -1,0 +1,134 @@
+/* components/css/footer-common.css */
+/* أنماط الفوتر المشترك */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(90deg, #0f2027, #203a43);
+    border-top: 3px solid #4cc9f0;
+    z-index: 1000;
+    padding: 15px 0 10px;
+    height: 60px;
+}
+
+.footer-icons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+}
+
+.footer-icons .icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    flex: 1;
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+.footer-icons .icon i {
+    font-size: 1.3rem;
+    margin-bottom: 3px;
+}
+
+.footer-icons .icon:hover {
+    color: #90e0ef;
+}
+
+.footer-icons .highlight {
+    position: relative;
+    color: #0f2027;
+    z-index: 1;
+    flex: 0 0 auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #d4af37, #f9d71c);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: -25px;
+    box-shadow: 0 5px 15px rgba(249, 215, 28, 0.4);
+    animation: float 3s ease-in-out infinite, pulse 2s infinite;
+    transition: all 0.3s ease;
+}
+
+.footer-icons .highlight i {
+    font-size: 1.6rem;
+}
+
+.footer-icons .highlight span {
+    display: none;
+}
+
+.footer-icons .highlight:active {
+    transform: scale(0.9);
+    box-shadow: 0 2px 8px rgba(249, 215, 28, 0.6);
+}
+
+/* أنيميشن */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(249, 215, 28, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(249, 215, 28, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(249, 215, 28, 0); }
+}
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .footer-icons .icon {
+        font-size: 0.75rem;
+    }
+
+    .footer-icons .icon i {
+        font-size: 1.2rem;
+    }
+
+    .footer-icons .highlight {
+        width: 55px;
+        height: 55px;
+    }
+
+    .footer-icons .highlight i {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-icons .icon span {
+        display: block;
+        font-size: 0.7rem;
+        margin-top: 2px;
+    }
+
+    .footer-icons .icon i {
+        margin-bottom: 0;
+        font-size: 1.4rem;
+    }
+
+    .footer-icons .highlight {
+        width: 50px;
+        height: 50px;
+        margin-top: -20px;
+    }
+
+    .footer-icons .highlight i {
+        font-size: 1.4rem;
+    }
+
+    .footer-icons .highlight span {
+        display: none;
+    }
+}
