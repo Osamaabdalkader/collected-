@@ -1,4 +1,3 @@
-// js/pages/home.js - منطق الصفحة الرئيسية
 import { 
   auth, database, storage,
   onAuthStateChanged, signOut,
@@ -7,6 +6,10 @@ import {
 
 class HomePage {
   constructor() {
+    this.currentFilter = {
+      type: '',
+      location: ''
+    };
     this.init();
   }
 
