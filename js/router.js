@@ -1,4 +1,4 @@
-// js/router.js - نظام التوجيه البسيط
+// js/router.js - الإصدار المحسن
 import { authManager } from './auth.js';
 
 class Router {
@@ -35,9 +35,12 @@ class Router {
       }
     });
 
-    // التوجيه الأولي
-    const initialRoute = window.location.hash.slice(1) || '';
-    this.navigate(initialRoute);
+    // التوجيه الأولي بعد تحميل الصفحة بالكامل
+    setTimeout(() => {
+      const initialRoute = window.location.hash.slice(1) || '';
+      console.log('التوجيه إلى المسار الأولي:', initialRoute);
+      this.navigate(initialRoute);
+    }, 100);
   }
 
   addRoute(path, script, style) {
@@ -45,22 +48,29 @@ class Router {
   }
 
   async navigate(path, addToHistory = true) {
-    const route = this.routes[path] || this.routes[''];
-    
-    if (addToHistory) {
-      window.history.pushState(null, null, `#${path}`);
+    try {
+      console.log('التوجيه إلى:', path);
+      
+      const route = this.routes[path] || this.routes[''];
+      
+      if (addToHistory) {
+        window.history.pushState(null, null, `#${path}`);
+      }
+      
+      this.currentRoute = path;
+      
+      // تحميل الأنماط
+      this.loadStyle(route.style);
+      
+      // تحميل البرنامج النصي
+      await this.loadScript(route.script);
+      
+      // تحديث حالة التنقل
+      this.updateNavigation();
+      
+    } catch (error) {
+      console.error('خطأ في التوجيه:', error);
     }
-    
-    this.currentRoute = path;
-    
-    // تحميل الأنماط
-    this.loadStyle(route.style);
-    
-    // تحميل البرنامج النصي
-    await this.loadScript(route.script);
-    
-    // تحديث حالة التنقل
-    this.updateNavigation();
   }
 
   loadStyle(href) {
@@ -77,28 +87,37 @@ class Router {
       link.rel = 'stylesheet';
       link.href = href;
       document.head.appendChild(link);
+      console.log('تم تحميل الأنماط:', href);
     }
   }
 
   async loadScript(src) {
-    // إزالة برنامج الصفحة السابق
-    const existingScript = document.getElementById('page-script');
-    if (existingScript) {
-      existingScript.remove();
-    }
-    
-    // تحميل برنامج الصفحة الجديدة
-    if (src) {
-      return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+      // إزالة برنامج الصفحة السابق
+      const existingScript = document.getElementById('page-script');
+      if (existingScript) {
+        existingScript.remove();
+      }
+      
+      // تحميل برنامج الصفحة الجديدة
+      if (src) {
         const script = document.createElement('script');
         script.id = 'page-script';
         script.type = 'module';
         script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
+        script.onload = () => {
+          console.log('تم تحميل البرنامج النصي:', src);
+          resolve();
+        };
+        script.onerror = () => {
+          console.error('فشل في تحميل البرنامج النصي:', src);
+          reject();
+        };
         document.body.appendChild(script);
-      });
-    }
+      } else {
+        resolve();
+      }
+    });
   }
 
   updateNavigation() {
@@ -114,7 +133,6 @@ class Router {
     });
   }
 
-  // التحقق من الصلاحية قبل التوجيه
   async checkAuthAndNavigate(path) {
     const requiresAuth = ['dashboard', 'management', 'network', 'reports', 'messages', 'add-post'].includes(path);
     
