@@ -1,25 +1,34 @@
-<!-- شريط التذييل -->
 <footer>
     <div class="footer-icons">
-        <a class="icon" id="groups-icon">
+        <a class="icon auth-only" id="groups-icon" data-route="network">
             <i class="fas fa-users"></i>
             <span>مجموعتك</span>
         </a>
-        <a class="icon" id="cart-icon">
+        <a class="icon auth-only" id="cart-icon">
             <i class="fas fa-shopping-cart"></i>
             <span>السلة</span>
         </a>
-        <a href="pages/add-post.html" class="icon highlight" id="add-button">
+        <a class="icon auth-only highlight" id="add-button" data-route="add-post">
             <i class="fas fa-plus"></i>
             <span>إضافة</span>
         </a>
-        <a class="icon" id="support-icon">
+        <a class="icon auth-only" id="support-icon" data-route="messages">
             <i class="fas fa-headset"></i>
             <span>الدعم</span>
         </a>
-        <a class="icon" id="more-icon">
+        <a class="icon auth-only" id="more-icon" data-route="dashboard">
             <i class="fas fa-cog"></i>
             <span>المزيد</span>
         </a>
+
+        <!-- للزوار -->
+        <a class="icon unauth-only" data-route="login">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>تسجيل الدخول</span>
+        </a>
+        <a class="icon unauth-only" data-route="register">
+            <i class="fas fa-user-plus"></i>
+            <span>إنشاء حساب</span>
+        </a>
     </div>
-</footer>
+            </footer>
