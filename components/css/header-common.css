@@ -1,0 +1,104 @@
+/* components/css/header-common.css */
+/* أنماط الهيدر المشترك للصفحات الأخرى */
+.common-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border-bottom: 3px solid #4cc9f0;
+}
+
+.common-header .gold-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #d4af37, #f9d71c, #d4af37);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.common-header .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 85px;
+}
+
+.common-header .header-top .icon {
+    position: relative;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #90e0ef;
+    font-size: 1.25rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.common-header .header-top .icon:hover {
+    background: rgba(76, 201, 240, 0.2);
+    transform: translateY(-2px);
+}
+
+.common-header .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.common-header .logo-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #4cc9f0;
+    box-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+}
+
+.common-header .logo-container h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: linear-gradient(to right, #4cc9f0, #90e0ef);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .common-header .header-top {
+        padding: 15px 12px;
+        min-height: 55px;
+    }
+
+    .common-header .logo-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .common-header .logo-container h1 {
+        font-size: 1rem;
+    }
+
+    .common-header .header-top .icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
+    }
+  }
