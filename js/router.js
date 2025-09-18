@@ -1,105 +1,131 @@
-// js/router.js - نظام التوجيه للصفحات
+// js/router.js - نظام التوجيه البسيط
+import { authManager } from './auth.js';
+
 class Router {
-    constructor() {
-        this.routes = {};
-        this.currentPath = '';
-        this.init();
+  constructor() {
+    this.routes = {};
+    this.currentRoute = '';
+    this.init();
+  }
+
+  init() {
+    // تعريف المسارات
+    this.addRoute('', 'js/pages/home.js', 'css/pages/home.css');
+    this.addRoute('login', 'js/pages/login.js', 'css/pages/login.css');
+    this.addRoute('register', 'js/pages/register.js', 'css/pages/register.css');
+    this.addRoute('dashboard', 'js/pages/dashboard.js', 'css/pages/dashboard.css');
+    this.addRoute('management', 'js/pages/management.js', 'css/pages/management.css');
+    this.addRoute('network', 'js/pages/network.js', 'css/pages/network.css');
+    this.addRoute('reports', 'js/pages/reports.js', 'css/pages/reports.css');
+    this.addRoute('messages', 'js/pages/messages.js', 'css/pages/messages.css');
+    this.addRoute('add-post', 'js/pages/add-post.js', 'css/pages/add-post.css');
+
+    // الاستماع لتغير العنوان
+    window.addEventListener('popstate', () => {
+      this.navigate(window.location.hash.slice(1) || '', false);
+    });
+
+    // التعامل مع النقر على الروابط
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[data-route]');
+      if (link) {
+        e.preventDefault();
+        const route = link.getAttribute('data-route');
+        this.navigate(route);
+      }
+    });
+
+    // التوجيه الأولي
+    const initialRoute = window.location.hash.slice(1) || '';
+    this.navigate(initialRoute);
+  }
+
+  addRoute(path, script, style) {
+    this.routes[path] = { script, style };
+  }
+
+  async navigate(path, addToHistory = true) {
+    const route = this.routes[path] || this.routes[''];
+    
+    if (addToHistory) {
+      window.history.pushState(null, null, `#${path}`);
     }
+    
+    this.currentRoute = path;
+    
+    // تحميل الأنماط
+    this.loadStyle(route.style);
+    
+    // تحميل البرنامج النصي
+    await this.loadScript(route.script);
+    
+    // تحديث حالة التنقل
+    this.updateNavigation();
+  }
 
-    init() {
-        // التعامل مع زر الرجوع في المتصفح
-        window.addEventListener('popstate', (e) => {
-            this.navigate(window.location.pathname, false);
-        });
-
-        // اعتراض النقر على الروابط
-        document.addEventListener('click', (e) => {
-            const link = e.target.closest('a');
-            if (link && link.getAttribute('href')?.startsWith('/')) {
-                e.preventDefault();
-                this.navigate(link.getAttribute('href'));
-            }
-        });
-
-        // التوجيه الأولي عند تحميل الصفحة
-        this.navigate(window.location.pathname, false);
+  loadStyle(href) {
+    // إزالة أنماط الصفحة السابقة
+    const existingStyle = document.getElementById('page-style');
+    if (existingStyle) {
+      existingStyle.remove();
     }
-
-    addRoute(path, callback) {
-        this.routes[path] = callback;
+    
+    // إضافة أنماط الصفحة الجديدة
+    if (href) {
+      const link = document.createElement('link');
+      link.id = 'page-style';
+      link.rel = 'stylesheet';
+      link.href = href;
+      document.head.appendChild(link);
     }
+  }
 
-    async navigate(path, addToHistory = true) {
-        // تجاهل الروابط الخارجية أو التي تبدأ بـ http
-        if (path.startsWith('http')) return;
-
-        // تنظيف المسار
-        const cleanPath = path.split('?')[0];
-        
-        if (this.currentPath === cleanPath) return;
-        
-        this.currentPath = cleanPath;
-        
-        if (addToHistory) {
-            window.history.pushState({}, '', path);
-        }
-
-        // إظهار مؤشر التحميل
-        this.showLoading();
-
-        try {
-            // البحث عن المسار في القائمة
-            const routeHandler = this.routes[cleanPath] || this.routes['/404'];
-            
-            if (routeHandler) {
-                await routeHandler();
-            } else {
-                console.error('No route found for:', cleanPath);
-                this.navigate('/404');
-            }
-        } catch (error) {
-            console.error('Navigation error:', error);
-            this.navigate('/500');
-        } finally {
-            this.hideLoading();
-        }
+  async loadScript(src) {
+    // إزالة برنامج الصفحة السابق
+    const existingScript = document.getElementById('page-script');
+    if (existingScript) {
+      existingScript.remove();
     }
-
-    showLoading() {
-        // إنشاء عنصر التحميل إذا لم يكن موجوداً
-        let loader = document.getElementById('router-loader');
-        if (!loader) {
-            loader = document.createElement('div');
-            loader.id = 'router-loader';
-            loader.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                z-index: 9999;
-                background: rgba(0, 0, 0, 0.7);
-                padding: 20px;
-                border-radius: 10px;
-                color: white;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            `;
-            loader.innerHTML = `
-                <div class="spinner"></div>
-                <p>جاري التحميل...</p>
-            `;
-            document.body.appendChild(loader);
-        }
-        loader.style.display = 'flex';
+    
+    // تحميل برنامج الصفحة الجديدة
+    if (src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.id = 'page-script';
+        script.type = 'module';
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.body.appendChild(script);
+      });
     }
+  }
 
-    hideLoading() {
-        const loader = document.getElementById('router-loader');
-        if (loader) {
-            loader.style.display = 'none';
-        }
+  updateNavigation() {
+    // تحديث حالة الروابط النشطة
+    const links = document.querySelectorAll('a[data-route]');
+    links.forEach(link => {
+      const route = link.getAttribute('data-route');
+      if (route === this.currentRoute) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
+  // التحقق من الصلاحية قبل التوجيه
+  async checkAuthAndNavigate(path) {
+    const requiresAuth = ['dashboard', 'management', 'network', 'reports', 'messages', 'add-post'].includes(path);
+    
+    if (requiresAuth && !authManager.getCurrentUser()) {
+      this.navigate('login');
+      return false;
     }
+    
+    this.navigate(path);
+    return true;
+  }
 }
 
 export const router = new Router();
