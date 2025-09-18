@@ -4,12 +4,7 @@ import { router } from './router.js';
 
 class App {
   constructor() {
-    this.init();
-  }
-
-  async init() {
-    // تهيئة إدارة المصادقة
-    await authManager.init();
+    this.init);
     
     // تحميل المكونات
     await this.loadComponents();
@@ -22,10 +17,19 @@ class App {
     router.navigate(initialRoute);
   }
 
-  async loadComponents() {
+
+
+
+  
+// js/main.js - جزء من الكود
+async loadComponents() {
+    // تحديد نوع الهيدر بناءً على الصفحة
+    const isHomePage = window.location.hash === '' || window.location.hash === '#';
+    const headerType = isHomePage ? 'header-main' : 'header-common';
+    
     // تحميل الهيدر
     const headerContainer = document.getElementById('header-container');
-    const headerResponse = await fetch('components/header-main.html');
+    const headerResponse = await fetch(`components/${headerType}.html`);
     headerContainer.innerHTML = await headerResponse.text();
     
     // تحميل الفوتر
@@ -33,29 +37,31 @@ class App {
     const footerResponse = await fetch('components/footer-common.html');
     footerContainer.innerHTML = await footerResponse.text();
     
+    // تحميل الأنماط
+    this.loadComponentStyle(`components/css/${headerType}.css`);
+    this.loadComponentStyle('components/css/footer-common.css');
+    
     // تحميل البرامج النصية للمكونات
-    await this.loadComponentScript('js/components/header-main.js');
+    await this.loadComponentScript(`js/components/${headerType}.js`);
     await this.loadComponentScript('js/components/footer-common.js');
-  }
+}
 
-  async loadComponentScript(src) {
+async loadComponentStyle(href) {
     return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.src = src;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.body.appendChild(script);
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        link.onload = resolve;
+        link.onerror = reject;
+        document.head.appendChild(link);
     });
-  }
+}
 
-  setupEventListeners() {
-    // الاستماع لتغير حالة المصادقة
-    authManager.addAuthStateListener((isLoggedIn) => {
-      this.onAuthStateChange(isLoggedIn);
-    });
-  }
 
+
+
+
+  
   onAuthStateChange(isLoggedIn) {
     console.log('حالة المصادقة تغيرت:', isLoggedIn);
     
