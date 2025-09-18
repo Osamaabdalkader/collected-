@@ -1,8 +1,5 @@
-import { 
-  auth, database, storage,
-  onAuthStateChanged, signOut,
-  ref, onValue, serverTimestamp, push, set, update, remove
-} from '../firebase.js';
+// js/pages/home.js - الإصدار المعدل
+import { database, ref, onValue } from '../firebase.js';
 
 class HomePage {
   constructor() {
@@ -10,51 +7,68 @@ class HomePage {
       type: '',
       location: ''
     };
+    this.currentPosts = [];
     this.init();
   }
 
   async init() {
+    console.log('تهيئة الصفحة الرئيسية...');
     this.postsContainer = document.getElementById('posts-container');
+    
+    if (!this.postsContainer) {
+      console.error('عنصر posts-container غير موجود في DOM');
+      return;
+    }
+    
     this.setupEventListeners();
     this.loadPosts();
   }
 
   setupEventListeners() {
-    // البحث
-    const searchInput = document.querySelector('.search-input');
-    const searchBtn = document.querySelector('.search-btn');
-    
-    if (searchBtn && searchInput) {
-      searchBtn.addEventListener('click', () => this.filterPosts());
-      searchInput.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
+    // البحث - إضافة تأخير بسيط لضمان تحميل DOM
+    setTimeout(() => {
+      const searchInput = document.querySelector('.search-input');
+      const searchBtn = document.querySelector('.search-btn');
+      
+      if (searchBtn && searchInput) {
+        searchBtn.addEventListener('click', () => this.filterPosts());
+        searchInput.addEventListener('keyup', (e) => {
+          if (e.key === 'Enter') {
+            this.filterPosts();
+          }
+        });
+        console.log('تم إعداد مستمعي البحث');
+      } else {
+        console.log('عناصر البحث غير موجودة في DOM');
+      }
+      
+      // الفلاتر
+      const typeFilter = document.querySelector('.filter-category select');
+      const locationFilter = document.querySelector('.filter-location select');
+      
+      if (typeFilter) {
+        typeFilter.addEventListener('change', () => {
+          this.currentFilter.type = typeFilter.value;
           this.filterPosts();
-        }
-      });
-    }
-    
-    // الفلاتر
-    const typeFilter = document.querySelector('.filter-category select');
-    const locationFilter = document.querySelector('.filter-location select');
-    
-    if (typeFilter) {
-      typeFilter.addEventListener('change', () => {
-        this.currentFilter.type = typeFilter.value;
-        this.filterPosts();
-      });
-    }
-    
-    if (locationFilter) {
-      locationFilter.addEventListener('change', () => {
-        this.currentFilter.location = locationFilter.value;
-        this.filterPosts();
-      });
-    }
+        });
+      }
+      
+      if (locationFilter) {
+        locationFilter.addEventListener('change', () => {
+          this.currentFilter.location = locationFilter.value;
+          this.filterPosts();
+        });
+      }
+    }, 500);
   }
 
   loadPosts() {
+    console.log('جاري تحميل المنشورات...');
     const postsRef = ref(database, 'posts');
+    
     onValue(postsRef, (snapshot) => {
+      if (!this.postsContainer) return;
+      
       this.postsContainer.innerHTML = '';
       this.currentPosts = [];
       
@@ -76,8 +90,16 @@ class HomePage {
           const postCard = this.createPostCard(post);
           this.postsContainer.appendChild(postCard);
         });
+        
+        console.log(`تم تحميل ${postsArray.length} منشور`);
       } else {
         this.postsContainer.innerHTML = '<p class="no-posts">لا توجد منشورات بعد</p>';
+        console.log('لا توجد منشورات في قاعدة البيانات');
+      }
+    }, (error) => {
+      console.error('خطأ في تحميل المنشورات:', error);
+      if (this.postsContainer) {
+        this.postsContainer.innerHTML = '<p class="no-posts">حدث خطأ في تحميل المنشورات</p>';
       }
     });
   }
@@ -234,5 +256,6 @@ class HomePage {
 
 // تهيئة الصفحة الرئيسية
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('تهيئة الصفحة الرئيسية...');
   new HomePage();
 });
