@@ -1,10 +1,15 @@
-// js/main.js - الملف الرئيسي للتطبيق
+// js/main.js
 import { authManager } from './auth.js';
 import { router } from './router.js';
 
 class App {
   constructor() {
-    this.init);
+    this.init();
+  }
+
+  async init() {
+    // تهيئة إدارة المصادقة
+    await authManager.init();
     
     // تحميل المكونات
     await this.loadComponents();
@@ -17,51 +22,41 @@ class App {
     router.navigate(initialRoute);
   }
 
-
-
-
-  
-// js/main.js - جزء من الكود
-async loadComponents() {
-    // تحديد نوع الهيدر بناءً على الصفحة
-    const isHomePage = window.location.hash === '' || window.location.hash === '#';
-    const headerType = isHomePage ? 'header-main' : 'header-common';
-    
-    // تحميل الهيدر
+  async loadComponents() {
+    // تحميل الهيدر الرئيسي للصفحة الرئيسية
     const headerContainer = document.getElementById('header-container');
-    const headerResponse = await fetch(`components/${headerType}.html`);
-    headerContainer.innerHTML = await headerResponse.text();
+    try {
+      const headerResponse = await fetch('components/header-main.html');
+      headerContainer.innerHTML = await headerResponse.text();
+    } catch (error) {
+      console.error('Failed to load header:', error);
+    }
     
-    // تحميل الفوتر
+    // تحميل الفوتر المشترك
     const footerContainer = document.getElementById('footer-container');
-    const footerResponse = await fetch('components/footer-common.html');
-    footerContainer.innerHTML = await footerResponse.text();
-    
-    // تحميل الأنماط
-    this.loadComponentStyle(`components/css/${headerType}.css`);
-    this.loadComponentStyle('components/css/footer-common.css');
+    try {
+      const footerResponse = await fetch('components/footer-common.html');
+      footerContainer.innerHTML = await footerResponse.text();
+    } catch (error) {
+      console.error('Failed to load footer:', error);
+    }
     
     // تحميل البرامج النصية للمكونات
-    await this.loadComponentScript(`js/components/${headerType}.js`);
-    await this.loadComponentScript('js/components/footer-common.js');
-}
+    try {
+      await import('./components/header-main.js');
+      await import('./components/footer-common.js');
+    } catch (error) {
+      console.error('Failed to load component scripts:', error);
+    }
+  }
 
-async loadComponentStyle(href) {
-    return new Promise((resolve, reject) => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        link.onload = resolve;
-        link.onerror = reject;
-        document.head.appendChild(link);
+  setupEventListeners() {
+    // الاستماع لتغير حالة المصادقة
+    authManager.addAuthStateListener((isLoggedIn) => {
+      this.onAuthStateChange(isLoggedIn);
     });
-}
+  }
 
-
-
-
-
-  
   onAuthStateChange(isLoggedIn) {
     console.log('حالة المصادقة تغيرت:', isLoggedIn);
     
