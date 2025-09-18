@@ -1,6 +1,6 @@
-// js/auth.js - الملف المشترك للمصادقة
+// js/auth.js - الملف المحسن للمصادقة
 import { auth, onAuthStateChanged, signOut } from './firebase.js';
-import { checkAdminStatus, onValue, ref, database, get } from './firebase.js';
+import { checkAdminStatus, onValue, ref, database } from './firebase.js';
 
 class AuthManager {
   constructor() {
@@ -8,50 +8,56 @@ class AuthManager {
     this.userData = null;
     this.isAdmin = false;
     this.adminListeners = [];
-    this.authListeners = [];
+    this.authStateListeners = [];
   }
 
   async init() {
     return new Promise((resolve) => {
       onAuthStateChanged(auth, async (user) => {
         this.currentUser = user;
+        
+        // إشعار جميع المستمعين بتغير حالة المصادقة
+        this.notifyAuthStateChange(!!user);
+        
         if (user) {
           console.log("تم تسجيل دخول المستخدم:", user.uid);
+          // تحميل بيانات المستخدم
+          await this.loadUserData(user.uid);
+          
           // التحقق من صلاحية المشرف
           await this.checkAndUpdateAdminStatus(user.uid);
           
           // إعداد مستمع لتغيرات حالة المشرف
           this.setupAdminStatusListener(user.uid);
           
-          // إشعار جميع المستمعين بتسجيل الدخول
-          this.notifyAuthChange(true, user);
           resolve(user);
         } else {
           console.log("لا يوجد مستخدم مسجل دخول");
           this.isAdmin = false;
+          this.userData = null;
           this.updateAuthUI(false);
-          // إشعار جميع المستمعين بتسجيل الخروج
-          this.notifyAuthChange(false, null);
           resolve(null);
         }
       });
     });
   }
 
-  addAuthListener(callback) {
-    this.authListeners.push(callback);
-    // إرجاع دالة لإلغاء الاشتراك
-    return () => {
-      this.authListeners = this.authListeners.filter(cb => cb !== callback);
-    };
-  }
-
-  notifyAuthChange(isLoggedIn, user) {
-    this.authListeners.forEach(callback => {
-      if (typeof callback === 'function') {
-        callback(isLoggedIn, user);
-      }
-    });
+  async loadUserData(userId) {
+    try {
+      const userRef = ref(database, 'users/' + userId);
+      onValue(userRef, (snapshot) => {
+        if (snapshot.exists()) {
+          this.userData = snapshot.val();
+          this.userData.uid = userId;
+          console.log("تم تحميل بيانات المستخدم:", this.userData);
+          
+          // إشعار بتحديث بيانات المستخدم
+          this.notifyUserDataChange(this.userData);
+        }
+      });
+    } catch (error) {
+      console.error("Error loading user data:", error);
+    }
   }
 
   async checkAndUpdateAdminStatus(userId) {
@@ -90,6 +96,30 @@ class AuthManager {
     this.adminListeners.push(unsubscribe);
   }
 
+  addAuthStateListener(callback) {
+    this.authStateListeners.push(callback);
+  }
+
+  notifyAuthStateChange(isLoggedIn) {
+    this.authStateListeners.forEach(callback => {
+      if (typeof callback === 'function') {
+        callback(isLoggedIn);
+      }
+    });
+  }
+
+  addUserDataListener(callback) {
+    this.userDataListeners.push(callback);
+  }
+
+  notifyUserDataChange(userData) {
+    this.userDataListeners.forEach(callback => {
+      if (typeof callback === 'function') {
+        callback(userData);
+      }
+    });
+  }
+
   removeAdminListeners() {
     // إزالة جميع المستمعين السابقين
     this.adminListeners.forEach(unsubscribe => {
@@ -116,12 +146,8 @@ class AuthManager {
     try {
       this.removeAdminListeners();
       await signOut(auth);
-      // استخدام نظام التوجيه بدلاً من إعادة التحميل
-      if (typeof router !== 'undefined') {
-        router.navigate('/');
-      } else {
-        window.location.href = '../index.html';
-      }
+      this.notifyAuthStateChange(false);
+      window.location.href = 'index.html';
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -194,27 +220,17 @@ class AuthManager {
     }
   }
 
-  // دالة جديدة للتحقق من المصادقة مع الانتظار
-  async checkAuth() {
-    return new Promise((resolve) => {
-      if (this.currentUser) {
-        resolve(this.currentUser);
-      } else {
-        // إذا لم يكن هناك مستخدم، ننتظر حدوث تغيير في حالة المصادقة
-        const unsubscribe = this.addAuthListener((isLoggedIn, user) => {
-          if (isLoggedIn) {
-            unsubscribe();
-            resolve(user);
-          }
-        });
-        
-        // وقت الانتظار القصوى (10 ثوان)
-        setTimeout(() => {
-          unsubscribe();
-          resolve(null);
-        }, 10000);
-      }
-    });
+  // الحصول على بيانات المستخدم الحالي
+  getCurrentUser() {
+    return this.currentUser;
+  }
+
+  getUserData() {
+    return this.userData;
+  }
+
+  isUserAdmin() {
+    return this.isAdmin;
   }
 }
 
