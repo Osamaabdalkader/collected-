@@ -1,0 +1,36 @@
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <i class="fas fa-user-circle"></i>
+        </div>
+        <h2>اسم المستخدم</h2>
+        <p>البريد الإلكتروني: user@example.com</p>
+    </div>
+    
+    <div class="profile-actions">
+        <div class="action-card">
+            <i class="fas fa-edit"></i>
+            <span>تعديل الملف الشخصي</span>
+        </div>
+        <div class="action-card">
+            <i class="fas fa-lock"></i>
+            <span>تغيير كلمة المرور</span>
+        </div>
+        <div class="action-card" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>تسجيل الخروج</span>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('logout-btn').addEventListener('click', async function() {
+    try {
+        await logout();
+        alert('تم تسجيل الخروج بنجاح');
+        navigateTo('/login');
+    } catch (error) {
+        alert('فشل تسجيل الخروج: ' + error.message);
+    }
+});
+</script>
