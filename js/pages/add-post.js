@@ -1,125 +1,135 @@
 import supabase from '../supbase.js'
+import { authManager } from '../auth.js'
 
-class HomeManager {
+class AddPostManager {
   constructor() {
-    this.posts = []
+    this.selectedFile = null
     this.init()
   }
 
-  async init() {
-    await this.loadPosts()
+  init() {
     this.setupEventListeners()
   }
 
-  async loadPosts() {
-    try {
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .order('created_at', { ascending: false })
+  setupEventListeners() {
+    const form = document.getElementById('add-post-form')
+    if (form) {
+      form.addEventListener('submit', (e) => this.handleSubmit(e))
+    }
 
-      if (error) throw error
+    document.getElementById('choose-image-btn').addEventListener('click', () => {
+      document.getElementById('post-image').click()
+    })
 
-      this.posts = data
-      this.renderPosts()
-    } catch (error) {
-      console.error('Error loading posts:', error)
+    document.getElementById('camera-btn').addEventListener('click', () => {
+      document.getElementById('post-image').setAttribute('capture', 'environment')
+      document.getElementById('post-image').click()
+    })
+
+    document.getElementById('post-image').addEventListener('change', (e) => {
+      this.handleImageSelect(e)
+    })
+
+    document.getElementById('remove-image-btn').addEventListener('click', () => {
+      this.removeSelectedImage()
+    })
+  }
+
+  handleImageSelect(event) {
+    const file = event.target.files[0]
+    if (file) {
+      this.selectedFile = file
+      document.getElementById('image-name').textContent = file.name
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        document.getElementById('preview-img').src = e.target.result
+        document.getElementById('image-preview').classList.remove('hidden')
+      }
+      reader.readAsDataURL(file)
     }
   }
 
-  renderPosts() {
-    const container = document.getElementById('posts-container')
-    if (!container) return
+  removeSelectedImage() {
+    this.selectedFile = null
+    document.getElementById('post-image').value = ''
+    document.getElementById('image-name').textContent = 'لم يتم اختيار صورة'
+    document.getElementById('image-preview').classList.add('hidden')
+  }
 
-    if (this.posts.length === 0) {
-      container.innerHTML = '<p class="no-posts">لا توجد منشورات بعد</p>'
+  async handleSubmit(event) {
+    event.preventDefault()
+
+    if (!authManager.currentUser) {
+      alert('يجب تسجيل الدخول أولاً')
+      window.location.href = '/login'
       return
     }
 
-    container.innerHTML = this.posts.map(post => `
-      <div class="post-card" data-id="${post.id}">
-        <div class="post-image">
-          ${post.image_url ? 
-            `<img src="${post.image_url}" alt="${post.title}" loading="lazy">` : 
-            `<div class="no-image"><i class="fas fa-image"></i></div>`
+    const title = document.getElementById('post-title').value
+    const description = document.getElementById('post-description').value
+    const category = document.getElementById('post-category').value
+    const price = document.getElementById('post-price').value
+    const location = document.getElementById('post-location').value
+    const phone = document.getElementById('post-phone').value
+
+    if (!title || !description || !category || !location || !phone) {
+      alert('يرجى ملء جميع الحقول المطلوبة')
+      return
+    }
+
+    try {
+      let imageUrl = null
+      if (this.selectedFile) {
+        imageUrl = await this.uploadImage(this.selectedFile)
+      }
+
+      const { error } = await supabase
+        .from('posts')
+        .insert([
+          {
+            title,
+            description,
+            category,
+            price,
+            location,
+            phone,
+            author_id: authManager.currentUser.id,
+            author_name: authManager.currentUser.user_metadata.name || 'مستخدم',
+            author_phone: phone,
+            image_url: imageUrl,
+            created_at: new Date()
           }
-        </div>
-        <div class="post-content">
-          <h3 class="post-title">${post.title}</h3>
-          <p class="post-description">${post.description}</p>
-          <div class="post-details">
-            <div class="detail-item">
-              <i class="fas fa-map-marker-alt"></i>
-              <span>${post.location}</span>
-            </div>
-            <div class="detail-item">
-              <i class="fas fa-tag"></i>
-              <span>${post.category}</span>
-            </div>
-            ${post.price ? `
-              <div class="detail-item">
-                <i class="fas fa-money-bill-wave"></i>
-                <span>${post.price}</span>
-              </div>
-            ` : ''}
-          </div>
-          <div class="post-meta">
-            <div class="post-time">
-              <i class="fas fa-clock"></i>
-              <span>${this.formatTime(post.created_at)}</span>
-            </div>
-            <div class="post-author">
-              <i class="fas fa-user-circle"></i>
-              <span>${post.author_name}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `).join('')
+        ])
 
-    // إضافة event listeners للبطاقات
-    document.querySelectorAll('.post-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const postId = card.dataset.id
-        this.viewPostDetail(postId)
-      })
-    })
-  }
+      if (error) throw error
 
-  formatTime(timestamp) {
-    const now = new Date()
-    const postDate = new Date(timestamp)
-    const diff = now - postDate
-
-    const minutes = Math.floor(diff / 60000)
-    const hours = Math.floor(diff / 3600000)
-    const days = Math.floor(diff / 86400000)
-
-    if (minutes < 1) return 'الآن'
-    if (minutes < 60) return `منذ ${minutes} دقيقة`
-    if (hours < 24) return `منذ ${hours} ساعة`
-    if (days < 7) return `منذ ${days} يوم`
-    
-    return postDate.toLocaleDateString('ar-EG', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
-
-  viewPostDetail(postId) {
-    const post = this.posts.find(p => p.id === postId)
-    if (post) {
-      localStorage.setItem('currentPost', JSON.stringify(post))
-      window.location.href = '/post-detail'
+      alert('تم نشر المنشور بنجاح!')
+      window.location.href = '/'
+    } catch (error) {
+      console.error('Error adding post:', error)
+      alert('حدث خطأ أثناء نشر المنشور: ' + error.message)
     }
   }
 
-  setupEventListeners() {
-    // يمكن إضافة أي event listeners إضافية هنا
+  async uploadImage(file) {
+    const fileName = `${Date.now()}_${file.name}`
+    const { data, error } = await supabase
+      .storage
+      .from('post-images')
+      .upload(fileName, file)
+
+    if (error) throw error
+
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from('post-images')
+      .getPublicUrl(fileName)
+
+    return publicUrl
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  new HomeManager()
+  new AddPostManager()
 })
