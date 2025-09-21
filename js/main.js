@@ -1,94 +1,55 @@
-// js/main.js
-import { authManager } from './auth.js';
-import { router } from './router.js';
-
-class App {
-  constructor() {
-    this.init();
-  }
-
-  async init() {
-    // تهيئة إدارة المصادقة
-    await authManager.init();
-    
+// تهيئة التطبيق
+document.addEventListener('DOMContentLoaded', async function() {
     // تحميل المكونات
-    await this.loadComponents();
+    await loadComponent('header-container', 'components/header-main.html');
+    await loadComponent('footer-container', 'components/footer-common.html');
     
-    // إعداد مستمعي الأحداث
-    this.setupEventListeners();
+    // تهيئة Supabase
+    initSupabase();
     
-    // التوجيه الأولي
-    const initialRoute = window.location.hash.slice(1) || '';
-    router.navigate(initialRoute);
-  }
+    // التحقق من حالة المصادقة
+    const user = await checkAuth();
+    
+    // تهيئة جهاز التوجيه
+    initRouter();
+    
+    // تحميل الصفحة المناسبة بناءً على حالة المصادقة والمسار
+    handleInitialPageLoad(user);
+});
 
-  async loadComponents() {
-    // تحميل الهيدر الرئيسي للصفحة الرئيسية
-    const headerContainer = document.getElementById('header-container');
+// دالة لتحميل المكونات
+async function loadComponent(containerId, componentPath) {
     try {
-      const headerResponse = await fetch('components/header-main.html');
-      headerContainer.innerHTML = await headerResponse.text();
+        const response = await fetch(componentPath);
+        const html = await response.text();
+        document.getElementById(containerId).innerHTML = html;
+        
+        // تحميل الـ JavaScript المرتبط بالمكون إذا كان موجودًا
+        const scriptPath = componentPath.replace('.html', '.js').replace('components/', 'js/components/');
+        try {
+            const scriptResponse = await fetch(scriptPath);
+            if (scriptResponse.ok) {
+                const script = document.createElement('script');
+                script.src = scriptPath;
+                document.body.appendChild(script);
+            }
+        } catch (e) {
+            console.log(`No script found for ${componentPath}`);
+        }
     } catch (error) {
-      console.error('Failed to load header:', error);
+        console.error('Error loading component:', error);
     }
-    
-    // تحميل الفوتر المشترك
-    const footerContainer = document.getElementById('footer-container');
-    try {
-      const footerResponse = await fetch('components/footer-common.html');
-      footerContainer.innerHTML = await footerResponse.text();
-    } catch (error) {
-      console.error('Failed to load footer:', error);
-    }
-    
-    // تحميل البرامج النصية للمكونات
-    try {
-      await import('./components/header-main.js');
-      await import('./components/footer-common.js');
-    } catch (error) {
-      console.error('Failed to load component scripts:', error);
-    }
-  }
-
-  setupEventListeners() {
-    // الاستماع لتغير حالة المصادقة
-    authManager.addAuthStateListener((isLoggedIn) => {
-      this.onAuthStateChange(isLoggedIn);
-    });
-  }
-
-  onAuthStateChange(isLoggedIn) {
-    console.log('حالة المصادقة تغيرت:', isLoggedIn);
-    
-    // تحديث واجهة المستخدم بناءً على حالة المصادقة
-    this.updateUIForAuthState(isLoggedIn);
-    
-    // إذا كان المستخدم مسجلاً دخولاً وطلب صفحة تسجيل الدخول، توجيه إلى لوحة التحكم
-    if (isLoggedIn && router.currentRoute === 'login') {
-      router.navigate('dashboard');
-    }
-    
-    // إذا لم يكن المستخدم مسجلاً دخولاً وطلب صفحة محمية، توجيه إلى تسجيل الدخول
-    if (!isLoggedIn && ['dashboard', 'management', 'network', 'reports', 'messages', 'add-post'].includes(router.currentRoute)) {
-      router.navigate('login');
-    }
-  }
-
-  updateUIForAuthState(isLoggedIn) {
-    const authElements = document.querySelectorAll('.auth-only');
-    const unauthElements = document.querySelectorAll('.unauth-only');
-    
-    if (isLoggedIn) {
-      authElements.forEach(el => el.style.display = 'block');
-      unauthElements.forEach(el => el.style.display = 'none');
-    } else {
-      authElements.forEach(el => el.style.display = 'none');
-      unauthElements.forEach(el => el.style.display = 'block');
-    }
-  }
 }
 
-// تهيئة التطبيق عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', () => {
-  new App();
-});
+// التعامل مع تحميل الصفحة الأولى
+function handleInitialPageLoad(user) {
+    const path = window.location.hash.substr(1) || '/';
+    
+    if (!user && path !== '/login' && path !== '/register') {
+        navigateTo('/login');
+    } else if (user && (path === '/login' || path === '/register')) {
+        navigateTo('/');
+    } else {
+        navigateTo(path);
+    }
+    }
