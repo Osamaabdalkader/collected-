@@ -4,27 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة تسريع الإلكترونية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/pages/home.css">
 </head>
 <body>
-    <!-- سيتم تحميل الهيدر هنا ديناميكيًا -->
-    <div id="header-container"></div>
+    <div id="app">
+        <div id="header-container"></div>
+        <main id="main-content"></main>
+        <div id="footer-container"></div>
+    </div>
 
-    <!-- المحتوى الرئيسي -->
-    <main id="main-content">
-        <!-- سيتم تحميل المحتوى هنا ديناميكيًا -->
-    </main>
-
-    <!-- سيتم تحميل الفوتر هنا ديناميكيًا -->
-    <div id="footer-container"></div>
-
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/router.js"></script>
-    <script src="js/main.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/supbase.js"></script>
+    <script type="module" src="js/router.js"></script>
+    <script type="module" src="js/auth.js"></script>
 </body>
 </html>
