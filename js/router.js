@@ -1,136 +1,82 @@
-// تهيئة جهاز التوجيه
-function initRouter() {
-    // الاستماع لتغييرات الـ hash
-    window.addEventListener('hashchange', handleRouteChange);
-}
+class Router {
+    constructor() {
+        this.routes = {
+            '/': 'pages/home.html',
+            '/dashboard': 'pages/dashboard.html',
+            '/management': 'pages/management.html',
+            '/network': 'pages/network.html',
+            '/reports': 'pages/reports.html',
+            '/messages': 'pages/messages.html',
+            '/add-post': 'pages/add-post.html',
+            '/post-detail': 'pages/post-detail.html',
+            '/login': 'pages/login.html',
+            '/register': 'pages/register.html'
+        };
 
-// التعامل مع تغيير المسار
-async function handleRouteChange() {
-    const path = window.location.hash.substr(1) || '/';
-    const user = await checkAuth();
-    
-    // إذا كان المستخدم غير مسجل والدخول إلى صفحة محمية
-    if (!user && path !== '/login' && path !== '/register') {
-        navigateTo('/login');
-        return;
+        this.init();
     }
-    
-    // إذا كان المستخدم مسجلًا وحاول الدخول إلى صفحة تسجيل/دخول
-    if (user && (path === '/login' || path === '/register')) {
-        navigateTo('/');
-        return;
-    }
-    
-    // تحميل الصفحة المناسبة
-    loadPage(path);
-}
 
-// التنقل إلى صفحة معينة
-function navigateTo(path) {
-    window.location.hash = path;
-}
+    init() {
+        window.addEventListener('popstate', () => {
+            this.loadRoute(window.location.pathname);
+        });
 
-// تحميل الصفحة
-async function loadPage(path) {
-    let pagePath;
-    
-    switch (path) {
-        case '/':
-            pagePath = 'pages/home.html';
-            break;
-        case '/profile':
-            pagePath = 'pages/profile.html';
-            break;
-        case '/groups':
-            pagePath = 'pages/groups.html';
-            break;
-        case '/support':
-            pagePath = 'pages/support.html';
-            break;
-        case '/more':
-            pagePath = 'pages/more.html';
-            break;
-        case '/login':
-            pagePath = 'pages/login.html';
-            break;
-        case '/register':
-            pagePath = 'pages/register.html';
-            break;
-        default:
-            pagePath = 'pages/home.html';
-    }
-    
-    try {
-        const response = await fetch(pagePath);
-        const html = await response.text();
-        document.getElementById('main-content').innerHTML = html;
-        
-        // تحميل أنماط الصفحة المحددة
-        loadPageStyles(path);
-        
-        // تحميل الـ JavaScript الخاص بالصفحة إذا كان موجودًا
-        const scriptPath = pagePath.replace('.html', '.js').replace('pages/', 'js/pages/');
-        try {
-            const scriptResponse = await fetch(scriptPath);
-            if (scriptResponse.ok) {
-                const script = document.createElement('script');
-                script.src = scriptPath;
-                document.body.appendChild(script);
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('[data-link]')) {
+                e.preventDefault();
+                this.navigate(e.target.href);
             }
-        } catch (e) {
-            console.log(`No script found for ${pagePath}`);
+        });
+
+        this.loadRoute(window.location.pathname);
+    }
+
+    async loadRoute(path) {
+        const route = this.routes[path] || this.routes['/'];
+        
+        try {
+            const response = await fetch(route);
+            const html = await response.text();
+            
+            document.getElementById('main-content').innerHTML = html;
+            
+            this.loadPageScript(path);
+            this.updateActiveNav(path);
+        } catch (error) {
+            console.error('خطأ في تحميل الصفحة:', error);
         }
-    } catch (error) {
-        console.error('Error loading page:', error);
-        document.getElementById('main-content').innerHTML = `
-            <div class="error-page">
-                <h2>حدث خطأ في تحميل الصفحة</h2>
-                <p>تعذر تحميل الصفحة المطلوبة. يرجى المحاولة مرة أخرى.</p>
-            </div>
-        `;
+    }
+
+    loadPageScript(path) {
+        const oldScript = document.getElementById('page-script');
+        if (oldScript) oldScript.remove();
+        
+        const scriptPath = `js/pages${path}.js`;
+        const script = document.createElement('script');
+        script.id = 'page-script';
+        script.src = scriptPath;
+        script.type = 'module';
+        
+        script.onerror = () => {
+            console.log(`لا يوجد script للصفحة: ${scriptPath}`);
+        };
+        
+        document.head.appendChild(script);
+    }
+
+    navigate(path) {
+        window.history.pushState({}, '', path);
+        this.loadRoute(path);
+    }
+
+    updateActiveNav(path) {
+        document.querySelectorAll('[data-link]').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === path) {
+                link.classList.add('active');
+            }
+        });
     }
 }
 
-// تحميل أنماط الصفحة المحددة
-function loadPageStyles(path) {
-    // إزالة أي أنماط صفحة سابقة
-    const existingPageStyle = document.getElementById('page-styles');
-    if (existingPageStyle) {
-        existingPageStyle.remove();
-    }
-    
-    let stylePath;
-    
-    switch (path) {
-        case '/':
-            stylePath = 'css/pages/home.css';
-            break;
-        case '/profile':
-            stylePath = 'css/pages/profile.css';
-            break;
-        case '/groups':
-            stylePath = 'css/pages/groups.css';
-            break;
-        case '/support':
-            stylePath = 'css/pages/support.css';
-            break;
-        case '/more':
-            stylePath = 'css/pages/more.css';
-            break;
-        case '/login':
-            stylePath = 'css/pages/login.css';
-            break;
-        case '/register':
-            stylePath = 'css/pages/register.css';
-            break;
-        default:
-            stylePath = 'css/pages/home.css';
-    }
-    
-    // إضافة رابط الأنماط الجديدة
-    const link = document.createElement('link');
-    link.id = 'page-styles';
-    link.rel = 'stylesheet';
-    link.href = stylePath;
-    document.head.appendChild(link);
-}
+export default Router;
