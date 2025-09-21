@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة منشور - منصة تسريع</title>
+    <link rel="stylesheet" href="../css/pages/add-post.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <h1><i class="fas fa-plus-circle"></i> إضافة منشور جديد</h1>
+            
+            <form id="add-post-form">
+                <div class="form-group">
+                    <label for="post-title">عنوان المنشور *</label>
+                    <input type="text" id="post-title" required placeholder="أدخل عنواناً جذاباً">
+                </div>
+                
+                <div class="form-group">
+                    <label for="post-description">وصف المنشور *</label>
+                    <textarea id="post-description" rows="4" required placeholder="صف منتجك أو خدمتك بشكل مفصل"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="post-category">الفئة *</label>
+                    <select id="post-category" required>
+                        <option value="">اختر الفئة</option>
+                        <option value="ادوية">ادوية</option>
+                        <option value="عقارات">عقارات</option>
+                        <option value="الكترونيات">الكترونيات</option>
+                        <option value="ملابس">ملابس</option>
+                        <option value="وظائف">وظائف</option>
+                        <option value="اخرى">أخرى</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="post-price">السعر (اختياري)</label>
+                    <input type="text" id="post-price" placeholder="مثال: 1000 ريال">
+                </div>
+                
+                <div class="form-group">
+                    <label for="post-location">المدينة *</label>
+                    <select id="post-location" required>
+                        <option value="">اختر المدينة</option>
+                        <option value="تعز">تعز</option>
+                        <option value="عدن">عدن</option>
+                        <option value="مارب">مارب</option>
+                        <option value="صنعاء">صنعاء</option>
+                        <option value="الحديدة">الحديدة</option>
+                        <option value="شبوة">شبوة</option>
+                        <option value="اب">اب</option>
+                        <option value="ذمار">ذمار</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="post-phone">رقم الهاتف *</label>
+                    <input type="tel" id="post-phone" required placeholder="رقم الهاتف للتواصل">
+                </div>
+                
+                <div class="form-group">
+                    <label>صورة المنشور (اختياري)</label>
+                    <div class="image-upload-container">
+                        <input type="file" id="post-image" accept="image/*" hidden>
+                        <button type="button" id="choose-image-btn" class="btn secondary">
+                            <i class="fas fa-image"></i> اختيار صورة
+                        </button>
+                        <button type="button" id="camera-btn" class="btn secondary">
+                            <i class="fas fa-camera"></i> الكاميرا
+                        </button>
+                        <span id="image-name">لم يتم اختيار صورة</span>
+                    </div>
+                    
+                    <div id="image-preview" class="image-preview hidden">
+                        <img id="preview-img" src="" alt="معاينة الصورة">
+                        <button type="button" id="remove-image-btn" class="btn danger">
+                            <i class="fas fa-trash"></i> إزالة
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" id="publish-btn" class="btn primary">
+                    <i class="fas fa-paper-plane"></i> نشر المنشور
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="../js/pages/add-post.js"></script>
+</body>
+</html>
